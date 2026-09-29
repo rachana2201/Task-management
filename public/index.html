@@ -1,0 +1,1353 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskFlow — Task Management</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Inter, Arial, sans-serif;
+      }
+
+      body {
+        background: #f5f7fb;
+        color: #172033;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      /* =========================
+       LOGIN / REGISTER
+    ========================= */
+
+      .auth-screen {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #111827, #1e293b);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .auth-card {
+        width: 400px;
+        max-width: 100%;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+        text-align: center;
+      }
+
+      .auth-logo {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        color: #111827;
+      }
+
+      .auth-logo span {
+        color: #6366f1;
+      }
+
+      .auth-subtitle {
+        color: #7b8496;
+        margin-bottom: 28px;
+        font-size: 14px;
+      }
+
+      .auth-card input {
+        width: 100%;
+        padding: 13px 14px;
+        margin-bottom: 14px;
+        border: 1px solid #dfe3ea;
+        border-radius: 9px;
+        outline: none;
+        transition: 0.2s;
+      }
+
+      .auth-card input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .auth-card button {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 9px;
+        background: #6366f1;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 5px;
+        transition: 0.2s;
+      }
+
+      .auth-card button:hover {
+        background: #4f46e5;
+      }
+
+      .auth-card p {
+        margin-top: 18px;
+        color: #7b8496;
+        font-size: 14px;
+      }
+
+      .auth-card p span {
+        color: #6366f1;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      #authMessage {
+        margin-top: 15px;
+        font-size: 14px;
+        min-height: 20px;
+        color: #ef4444;
+      }
+
+      /* =========================
+       APP
+    ========================= */
+
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* =========================
+       SIDEBAR
+    ========================= */
+
+      .sidebar {
+        width: 245px;
+        background: #111827;
+        color: white;
+        padding: 25px 18px;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+        left: 0;
+        top: 0;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 45px;
+        padding-left: 12px;
+      }
+
+      .logo span {
+        color: #6366f1;
+      }
+
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .nav button {
+        border: none;
+        background: transparent;
+        color: #aeb6c7;
+        padding: 13px 14px;
+        text-align: left;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .nav button:hover,
+      .nav button.active {
+        background: #252d40;
+        color: white;
+      }
+
+      .sidebar-bottom {
+        margin-top: auto;
+        border-top: 1px solid #293144;
+        padding-top: 18px;
+      }
+
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        background: #6366f1;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-weight: bold;
+      }
+
+      .user small {
+        color: #9ca3af;
+      }
+
+      .logout-btn {
+        width: 100%;
+        margin-top: 15px;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #252d40;
+        color: #d1d5db;
+        cursor: pointer;
+      }
+
+      .logout-btn:hover {
+        background: #374151;
+        color: white;
+      }
+
+      /* =========================
+       MAIN
+    ========================= */
+
+      .main {
+        margin-left: 245px;
+        width: calc(100% - 245px);
+        padding: 32px 38px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .topbar h1 {
+        font-size: 28px;
+      }
+
+      .topbar p {
+        color: #7b8496;
+        margin-top: 5px;
+      }
+
+      .add-btn {
+        background: #6366f1;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
+      }
+
+      .add-btn:hover {
+        background: #4f46e5;
+      }
+
+      /* =========================
+       STATS
+    ========================= */
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 22px;
+        border-radius: 14px;
+        border: 1px solid #e7eaf0;
+      }
+
+      .stat-title {
+        color: #7b8496;
+        font-size: 14px;
+      }
+
+      .stat-number {
+        font-size: 30px;
+        font-weight: 700;
+        margin-top: 8px;
+      }
+
+      /* =========================
+       TOOLBAR
+    ========================= */
+
+      .toolbar {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #e7eaf0;
+        display: flex;
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+
+      .search {
+        flex: 1;
+        border: 1px solid #e0e4eb;
+        padding: 11px 14px;
+        border-radius: 8px;
+        outline: none;
+      }
+
+      .search:focus {
+        border-color: #6366f1;
+      }
+
+      .filter {
+        border: 1px solid #e0e4eb;
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: white;
+      }
+
+      /* =========================
+       KANBAN
+    ========================= */
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      .column {
+        background: #eef1f6;
+        border-radius: 14px;
+        padding: 15px;
+        min-height: 350px;
+      }
+
+      .column-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-weight: 700;
+      }
+
+      .count {
+        background: white;
+        padding: 3px 9px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      /* =========================
+       TASK
+    ========================= */
+
+      .task {
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border: 1px solid #e7eaf0;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
+      }
+
+      .task h3 {
+        font-size: 15px;
+        margin-bottom: 7px;
+      }
+
+      .task p {
+        color: #7b8496;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+
+      .task-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .date {
+        font-size: 12px;
+        color: #7b8496;
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 5px;
+      }
+
+      .task-actions button {
+        border: none;
+        background: #f1f3f7;
+        padding: 5px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .task-actions button:hover {
+        background: #e5e7eb;
+      }
+
+      .empty {
+        text-align: center;
+        color: #9ca3af;
+        padding: 40px 10px;
+        font-size: 14px;
+      }
+
+      /* =========================
+       MODAL
+    ========================= */
+
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        padding: 20px;
+      }
+
+      .modal.show {
+        display: flex;
+      }
+
+      .modal-box {
+        background: white;
+        width: 450px;
+        max-width: 100%;
+        border-radius: 16px;
+        padding: 28px;
+      }
+
+      .modal-box h2 {
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #dfe3ea;
+        border-radius: 8px;
+        outline: none;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 90px;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .cancel {
+        border: none;
+        background: #eef0f4;
+        padding: 10px 17px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .save {
+        border: none;
+        background: #6366f1;
+        color: white;
+        padding: 10px 17px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      /* =========================
+       RESPONSIVE
+    ========================= */
+
+      @media (max-width: 1000px) {
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .board {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .sidebar {
+          width: 70px;
+        }
+
+        .logo {
+          font-size: 0;
+        }
+
+        .logo span {
+          font-size: 22px;
+        }
+
+        .nav button {
+          font-size: 0;
+          text-align: center;
+        }
+
+        .main {
+          margin-left: 70px;
+          width: calc(100% - 70px);
+          padding: 20px;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+
+        .toolbar {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- =========================
+       LOGIN / REGISTER SCREEN
+  ========================= -->
+
+    <div id="authScreen" class="auth-screen">
+      ```
+      <div class="auth-card">
+        <div class="auth-logo">Task<span>Flow</span></div>
+
+        <p class="auth-subtitle" id="authSubtitle">
+          Sign in to manage your tasks
+        </p>
+
+        <!-- LOGIN -->
+
+        <div id="loginForm">
+          <input id="loginEmail" type="email" placeholder="Email address" />
+
+          <input id="loginPassword" type="password" placeholder="Password" />
+
+          <button onclick="loginUser()">Sign In</button>
+
+          <p>
+            Don't have an account?
+            <span onclick="showRegister()"> Create one </span>
+          </p>
+        </div>
+
+        <!-- REGISTER -->
+
+        <div id="registerForm" style="display: none">
+          <input id="registerEmail" type="email" placeholder="Email address" />
+
+          <input
+            id="registerPassword"
+            type="password"
+            placeholder="Password (6+ characters)"
+          />
+
+          <button onclick="registerUser()">Create Account</button>
+
+          <p>
+            Already have an account?
+            <span onclick="showLogin()"> Sign in </span>
+          </p>
+        </div>
+
+        <div id="authMessage"></div>
+      </div>
+      ```
+    </div>
+
+    <!-- =========================
+       MAIN APPLICATION
+  ========================= -->
+
+    <div class="app" style="display: none">
+      ```
+      <aside class="sidebar">
+        <div class="logo">Task<span>Flow</span></div>
+
+        <div class="nav">
+          <button class="active">📊 Dashboard</button>
+
+          <button onclick="showAllTasks()">✓ My Tasks</button>
+
+          <button onclick="showDoingTasks()">⏳ In Progress</button>
+
+          <button onclick="showDoneTasks()">✓ Completed</button>
+        </div>
+
+        <div class="sidebar-bottom">
+          <div class="user">
+            <div class="avatar" id="userAvatar">U</div>
+
+            <div>
+              <strong id="userName"> User </strong>
+
+              <br />
+
+              <small> Task Manager </small>
+            </div>
+          </div>
+
+          <button class="logout-btn" onclick="logoutUser()">Logout</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <!-- TOP BAR -->
+
+        <div class="topbar">
+          <div>
+            <h1>Good morning 👋</h1>
+
+            <p>Here's what's happening with your tasks today.</p>
+          </div>
+
+          <button class="add-btn" onclick="openModal()">+ Add Task</button>
+        </div>
+
+        <!-- STATISTICS -->
+
+        <section class="stats">
+          <div class="stat-card">
+            <div class="stat-title">Total Tasks</div>
+
+            <div class="stat-number" id="totalTasks">0</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">To Do</div>
+
+            <div class="stat-number" id="todoTasks">0</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">In Progress</div>
+
+            <div class="stat-number" id="doingTasks">0</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Completed</div>
+
+            <div class="stat-number" id="doneTasks">0</div>
+          </div>
+        </section>
+
+        <!-- SEARCH -->
+
+        <div class="toolbar">
+          <input
+            class="search"
+            id="search"
+            placeholder="Search tasks..."
+            oninput="renderTasks()"
+          />
+
+          <select class="filter" id="filter" onchange="renderTasks()">
+            <option value="all">All Tasks</option>
+
+            <option value="todo">To Do</option>
+
+            <option value="doing">In Progress</option>
+
+            <option value="done">Completed</option>
+          </select>
+        </div>
+
+        <!-- KANBAN BOARD -->
+
+        <section class="board">
+          <!-- TODO -->
+
+          <div class="column">
+            <div class="column-header">
+              <span> To Do </span>
+
+              <span class="count" id="todoCount"> 0 </span>
+            </div>
+
+            <div id="todoColumn"></div>
+          </div>
+
+          <!-- DOING -->
+
+          <div class="column">
+            <div class="column-header">
+              <span> In Progress </span>
+
+              <span class="count" id="doingCount"> 0 </span>
+            </div>
+
+            <div id="doingColumn"></div>
+          </div>
+
+          <!-- DONE -->
+
+          <div class="column">
+            <div class="column-header">
+              <span> Completed </span>
+
+              <span class="count" id="doneCount"> 0 </span>
+            </div>
+
+            <div id="doneColumn"></div>
+          </div>
+        </section>
+      </main>
+      ```
+    </div>
+
+    <!-- =========================
+       ADD TASK MODAL
+  ========================= -->
+
+    <div class="modal" id="modal">
+      ```
+      <div class="modal-box">
+        <h2>Create New Task</h2>
+
+        <div class="form-group">
+          <label> Task Title </label>
+
+          <input id="title" placeholder="Enter task title" />
+        </div>
+
+        <div class="form-group">
+          <label> Description </label>
+
+          <textarea
+            id="description"
+            placeholder="Describe your task..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label> Due Date </label>
+
+          <input id="due" type="date" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="cancel" onclick="closeModal()">Cancel</button>
+
+          <button class="save" onclick="addTask()">Create Task</button>
+        </div>
+      </div>
+      ```
+    </div>
+
+    <!-- =========================
+       JAVASCRIPT
+  ========================= -->
+
+    <script>
+      let tasks = [];
+      let token = localStorage.getItem("token");
+
+      const authScreen = document.getElementById("authScreen");
+
+      const app = document.querySelector(".app");
+
+      /* =========================
+       AUTH
+    ========================= */
+
+      function showLogin() {
+        document.getElementById("loginForm").style.display = "block";
+
+        document.getElementById("registerForm").style.display = "none";
+
+        document.getElementById("authSubtitle").textContent =
+          "Sign in to manage your tasks";
+
+        document.getElementById("authMessage").textContent = "";
+      }
+
+      function showRegister() {
+        document.getElementById("loginForm").style.display = "none";
+
+        document.getElementById("registerForm").style.display = "block";
+
+        document.getElementById("authSubtitle").textContent =
+          "Create your TaskFlow account";
+
+        document.getElementById("authMessage").textContent = "";
+      }
+
+      async function loginUser() {
+        const email = document.getElementById("loginEmail").value.trim();
+
+        const password = document.getElementById("loginPassword").value;
+
+        if (!email || !password) {
+          document.getElementById("authMessage").textContent =
+            "Please enter email and password";
+
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/login", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              email,
+              password,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            document.getElementById("authMessage").textContent =
+              data.error || "Login failed";
+
+            return;
+          }
+
+          token = data.token;
+
+          localStorage.setItem("token", token);
+
+          showDashboard();
+        } catch (error) {
+          console.error(error);
+
+          document.getElementById("authMessage").textContent =
+            "Server connection failed";
+        }
+      }
+
+      async function registerUser() {
+        const email = document.getElementById("registerEmail").value.trim();
+
+        const password = document.getElementById("registerPassword").value;
+
+        if (!email || !password) {
+          document.getElementById("authMessage").textContent =
+            "Please enter email and password";
+
+          return;
+        }
+
+        if (password.length < 6) {
+          document.getElementById("authMessage").textContent =
+            "Password must contain at least 6 characters";
+
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/register", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              email,
+              password,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            document.getElementById("authMessage").textContent =
+              data.error || "Registration failed";
+
+            return;
+          }
+
+          token = data.token;
+
+          localStorage.setItem("token", token);
+
+          showDashboard();
+        } catch (error) {
+          console.error(error);
+
+          document.getElementById("authMessage").textContent =
+            "Server connection failed";
+        }
+      }
+
+      function showDashboard() {
+        authScreen.style.display = "none";
+
+        app.style.display = "flex";
+
+        loadTasks();
+      }
+
+      function logoutUser() {
+        localStorage.removeItem("token");
+
+        token = null;
+
+        tasks = [];
+
+        app.style.display = "none";
+
+        authScreen.style.display = "flex";
+
+        showLogin();
+      }
+
+      /* =========================
+       MODAL
+    ========================= */
+
+      function openModal() {
+        document.getElementById("modal").classList.add("show");
+      }
+
+      function closeModal() {
+        document.getElementById("modal").classList.remove("show");
+
+        document.getElementById("title").value = "";
+
+        document.getElementById("description").value = "";
+
+        document.getElementById("due").value = "";
+      }
+
+      /* =========================
+       LOAD TASKS
+    ========================= */
+
+      async function loadTasks() {
+        if (!token) return;
+
+        try {
+          const response = await fetch("/api/tasks", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            localStorage.removeItem("token");
+
+            token = null;
+
+            app.style.display = "none";
+
+            authScreen.style.display = "flex";
+
+            showLogin();
+
+            return;
+          }
+
+          tasks = await response.json();
+
+          renderTasks();
+        } catch (error) {
+          console.error("Error loading tasks:", error);
+        }
+      }
+
+      /* =========================
+       ADD TASK
+    ========================= */
+
+      async function addTask() {
+        const title = document.getElementById("title").value.trim();
+
+        const description = document.getElementById("description").value.trim();
+
+        const due = document.getElementById("due").value || null;
+
+        if (!title) {
+          alert("Please enter a task title");
+
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/tasks", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+
+              Authorization: `Bearer ${token}`,
+            },
+
+            body: JSON.stringify({
+              title,
+              description,
+              due,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            alert(data.error || "Failed to create task");
+
+            return;
+          }
+
+          tasks.unshift(data);
+
+          closeModal();
+
+          renderTasks();
+        } catch (error) {
+          console.error("Error adding task:", error);
+        }
+      }
+
+      /* =========================
+       DELETE TASK
+    ========================= */
+
+      async function deleteTask(id) {
+        if (!confirm("Delete this task?")) return;
+
+        try {
+          const response = await fetch(`/api/tasks/${id}`, {
+            method: "DELETE",
+
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            tasks = tasks.filter((task) => task.id !== id);
+
+            renderTasks();
+          }
+        } catch (error) {
+          console.error("Error deleting task:", error);
+        }
+      }
+
+      /* =========================
+       UPDATE STATUS
+    ========================= */
+
+      async function updateStatus(id, status) {
+        const task = tasks.find((t) => t.id === id);
+
+        if (!task) return;
+
+        try {
+          const response = await fetch(`/api/tasks/${id}`, {
+            method: "PUT",
+
+            headers: {
+              "Content-Type": "application/json",
+
+              Authorization: `Bearer ${token}`,
+            },
+
+            body: JSON.stringify({
+              ...task,
+              status,
+            }),
+          });
+
+          if (response.ok) {
+            const updated = await response.json();
+
+            tasks = tasks.map((t) => (t.id === id ? updated : t));
+
+            renderTasks();
+          }
+        } catch (error) {
+          console.error("Error updating task:", error);
+        }
+      }
+
+      /* =========================
+       RENDER TASKS
+    ========================= */
+
+      function renderTasks() {
+        const search = document.getElementById("search").value.toLowerCase();
+
+        const filter = document.getElementById("filter").value;
+
+        const todoColumn = document.getElementById("todoColumn");
+
+        const doingColumn = document.getElementById("doingColumn");
+
+        const doneColumn = document.getElementById("doneColumn");
+
+        todoColumn.innerHTML = "";
+
+        doingColumn.innerHTML = "";
+
+        doneColumn.innerHTML = "";
+
+        const filtered = tasks.filter((task) => {
+          const title = task.title.toLowerCase();
+
+          const description = (task.description || "").toLowerCase();
+
+          const matchesSearch =
+            title.includes(search) || description.includes(search);
+
+          const matchesFilter = filter === "all" || task.status === filter;
+
+          return matchesSearch && matchesFilter;
+        });
+
+        if (filtered.length === 0) {
+          if (filter === "all" || filter === "todo") {
+            todoColumn.innerHTML = `<div class="empty">
+              No tasks
+            </div>`;
+          }
+
+          if (filter === "all" || filter === "doing") {
+            doingColumn.innerHTML = `<div class="empty">
+              No tasks
+            </div>`;
+          }
+
+          if (filter === "all" || filter === "done") {
+            doneColumn.innerHTML = `<div class="empty">
+              No tasks
+            </div>`;
+          }
+        }
+
+        filtered.forEach((task) => {
+          const card = document.createElement("div");
+
+          card.className = "task";
+
+          card.innerHTML = `
+
+          <h3>
+            ${escapeHTML(task.title)}
+          </h3>
+
+          <p>
+            ${escapeHTML(task.description || "No description")}
+          </p>
+
+          <div class="task-footer">
+
+            <span class="date">
+
+              ${task.due ? "📅 " + task.due : "No due date"}
+
+            </span>
+
+
+            <div class="task-actions">
+
+              ${
+                task.status !== "todo"
+                  ? `
+                  <button
+                    onclick="
+                      updateStatus(
+                        ${task.id},
+                        'todo'
+                      )
+                    "
+                  >
+                    ←
+                  </button>
+                `
+                  : ""
+              }
+
+
+              ${
+                task.status !== "doing"
+                  ? `
+                  <button
+                    onclick="
+                      updateStatus(
+                        ${task.id},
+                        'doing'
+                      )
+                    "
+                  >
+                    →
+                  </button>
+                `
+                  : ""
+              }
+
+
+              ${
+                task.status !== "done"
+                  ? `
+                  <button
+                    onclick="
+                      updateStatus(
+                        ${task.id},
+                        'done'
+                      )
+                    "
+                  >
+                    ✓
+                  </button>
+                `
+                  : ""
+              }
+
+
+              <button
+                onclick="
+                  deleteTask(${task.id})
+                "
+              >
+                🗑
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+          if (task.status === "todo") {
+            todoColumn.appendChild(card);
+          } else if (task.status === "doing") {
+            doingColumn.appendChild(card);
+          } else {
+            doneColumn.appendChild(card);
+          }
+        });
+
+        updateStats();
+      }
+
+      /* =========================
+       STATISTICS
+    ========================= */
+
+      function updateStats() {
+        const todo = tasks.filter((t) => t.status === "todo").length;
+
+        const doing = tasks.filter((t) => t.status === "doing").length;
+
+        const done = tasks.filter((t) => t.status === "done").length;
+
+        document.getElementById("totalTasks").textContent = tasks.length;
+
+        document.getElementById("todoTasks").textContent = todo;
+
+        document.getElementById("doingTasks").textContent = doing;
+
+        document.getElementById("doneTasks").textContent = done;
+
+        document.getElementById("todoCount").textContent = todo;
+
+        document.getElementById("doingCount").textContent = doing;
+
+        document.getElementById("doneCount").textContent = done;
+      }
+
+      /* =========================
+       SIDEBAR FILTERS
+    ========================= */
+
+      function showAllTasks() {
+        document.getElementById("filter").value = "all";
+
+        renderTasks();
+      }
+
+      function showDoingTasks() {
+        document.getElementById("filter").value = "doing";
+
+        renderTasks();
+      }
+
+      function showDoneTasks() {
+        document.getElementById("filter").value = "done";
+
+        renderTasks();
+      }
+
+      /* =========================
+       SECURITY
+    ========================= */
+
+      function escapeHTML(value) {
+        const div = document.createElement("div");
+
+        div.textContent = value;
+
+        return div.innerHTML;
+      }
+
+      /* =========================
+       START APPLICATION
+    ========================= */
+
+      if (token) {
+        showDashboard();
+      } else {
+        authScreen.style.display = "flex";
+
+        app.style.display = "none";
+      }
+    </script>
+  </body>
+</html>

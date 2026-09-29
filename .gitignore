@@ -1,0 +1,5 @@
+node_modules/
+.env
+tasks.db
+*.db
+npm-debug.log*
